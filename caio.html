@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎉 Aniversário da Tsumiki 🎂</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Comic Sans MS", sans-serif;
+    background: linear-gradient(135deg, #ffd6e0, #ffe9a7, #c4f5fc);
+    background-size: 300% 300%;
+    animation: gradient 12s ease infinite;
+    text-align: center;
+    overflow-x: hidden;
+  }
+  @keyframes gradient {
+    0% { background-position: 0% 50% }
+    50% { background-position: 100% 50% }
+    100% { background-position: 0% 50% }
+  }
+  h1 { color: #ff3399; font-size: 3rem; margin-top: 20px; text-shadow: 2px 2px #fff; }
+  #menu, .game { margin-top: 30px; }
+  .btn { display:inline-block;margin:15px;padding:15px 25px;background:#ff8ab8;color:white;font-size:20px;border:none;border-radius:15px;cursor:pointer;box-shadow:0 4px #c74b7b;transition: all 0.2s; }
+  .btn:hover { background:#ffaad0; transform: scale(1.1); }
+  #scoreboard { position: fixed; top: 10px; right: 20px; background: #fff4fa; padding: 10px 20px; border-radius: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); font-size: 18px; }
+  .hidden { display: none; }
+  input { padding: 10px; font-size: 16px; border-radius: 10px; border: 2px solid #ff8ab8; margin-right: 10px; }
+  #gameContainer img, #gameContainer div { margin-top: 10px; }
+  #moonMap { background: radial-gradient(circle at center, #2e0249, #4b0082); min-height: 500px; color:white; padding:20px; }
+  .animeGirl { width:100px; cursor:pointer; margin: 10px; border-radius:15px; transition: transform 0.2s; }
+  .animeGirl:hover { transform: scale(1.1); }
+</style>
+</head>
+<body>
+<h1>🎂 Feliz Aniversário, Caio! 🎉</h1>
+<div id="scoreboard">⭐ Pontos: <span id="points">0</span></div>
+
+<div id="menu">
+  <p>Escolha um jogo e divirta-se! 😎</p>
+  <button class="btn" onclick="startGame('salgados')">🍩 Coma os Salgados</button>
+  <button class="btn" onclick="startGame('baloes')">🎈 Estoure os Balões</button>
+  <button class="btn" onclick="startGame('presentes')">🎁 Abra os Presentes</button>
+  <button class="btn" onclick="startGame('bolo')">🍰 Bolo de Aniversário</button>
+  <button class="btn" onclick="startGame('loja')">🛍️ Lojinha da Tsumiki</button>
+  <button class="btn" onclick="startGame('emojiRace')">🏁 Corrida de Emojis</button>
+  <button class="btn" onclick="startGame('festa')">💃 Festa da Dança</button>
+  <button class="btn" onclick="startGame('fofa')">💖 Quem é a mais fofa?</button>
+  <button class="btn" onclick="startGame('moon')">🌙 Visitar a Lua Fantástica</button>
+</div>
+
+<div id="gameContainer" class="game hidden"></div>
+
+<script>
+let pontos = 0;
+const pointsDisplay = document.getElementById("points");
+const gameContainer = document.getElementById("gameContainer");
+const menu = document.getElementById("menu");
+
+function addPoints(qtd){pontos+=qtd; pointsDisplay.textContent=pontos;}
+
+function startGame(game){
+  menu.classList.add("hidden");
+  gameContainer.classList.remove("hidden");
+  gameContainer.innerHTML = "";
+
+  // FUNÇÃO PARA CRIAR BOTÃO DE VOLTAR
+  function criarBotaoVoltar(){
+    const backBtn=document.createElement("button");
+    backBtn.textContent="⬅️ Voltar ao Menu";
+    backBtn.className="btn";
+    backBtn.onclick=()=>{gameContainer.classList.add("hidden"); menu.classList.remove("hidden");};
+    gameContainer.appendChild(backBtn);
+  }
+
+  // COMER SALGADOS
+  if(game==='salgados'){
+    gameContainer.innerHTML += `<h2>🍩 Coma os Salgados!</h2>
+      <p>Clique nos salgados para comer!</p>
+      <p>Você comeu <span id="score">0</span> salgados.</p>
+      <div style="font-size:80px;cursor:pointer;" id="salgado">🍩</div>`;
+    let score=0;
+    document.getElementById("salgado").onclick=()=>{score++; addPoints(1); document.getElementById("score").textContent=score;};
+    criarBotaoVoltar();
+  }
+
+  // ESTOURAR BALÕES
+  if(game==='baloes'){
+    gameContainer.innerHTML += `<h2>🎈 Estoure os Balões!</h2>
+      <p>Clique nos balões para estourar!</p>
+      <p>Você estourou <span id="count">0</span> balões.</p>
+      <div id="balloons"></div>`;
+    const container=document.getElementById("balloons"); let count=0;
+    for(let i=0;i<10;i++){
+      const balloon=document.createElement("div");
+      balloon.style.fontSize="60px"; balloon.style.display="inline-block"; balloon.style.cursor="pointer"; balloon.textContent="🎈";
+      balloon.onclick=()=>{count++; addPoints(2); document.getElementById("count").textContent=count; balloon.remove();};
+      container.appendChild(balloon);
+    }
+    criarBotaoVoltar();
+  }
+
+  // ABRIR PRESENTES
+  if(game==='presentes'){
+    gameContainer.innerHTML += `<h2>🎁 Abra os Presentes!</h2>
+      <p>Você abriu <span id="opened">0</span> presentes.</p>
+      <div id="presents"></div>`;
+    const presents=document.getElementById("presents");
+    const emojis=["🎉","🧸","🍭","🍫","🎨"];
+    let opened=0;
+    emojis.forEach(emoji=>{
+      const box=document.createElement("div");
+      box.style.width="100px"; box.style.height="100px"; box.style.margin="10px"; box.style.border="2px solid #ff8ab8"; 
+      box.style.borderRadius="10px"; box.style.background="#ffccdd"; box.style.cursor="pointer"; box.style.fontSize="50px";
+      box.style.display="flex"; box.style.alignItems="center"; box.style.justifyContent="center";
+      box.onclick=()=>{opened++; addPoints(3); document.getElementById("opened").textContent=opened; box.textContent=emoji;};
+      presents.appendChild(box);
+    });
+    criarBotaoVoltar();
+  }
+
+  // BOLO
+  if(game==='bolo'){
+    gameContainer.innerHTML += `<h2>🍰 Jogo do Bolo!</h2>
+      <p>Digite o nome de alguém para dar a primeira fatia:</p>
+      <input id="nome" placeholder="Nome aqui">
+      <button class="btn" id="dar">Dar fatia</button>
+      <p id="msg"></p>`;
+    document.getElementById("dar").onclick=()=>{
+      const nome=document.getElementById("nome").value;
+      if(nome.trim()){addPoints(5); document.getElementById("msg").textContent="Você deu uma fatia para "+nome+"! 🍰";}
+    };
+    criarBotaoVoltar();
+  }
+
+  // LOJINHA
+  if(game==='loja'){
+    gameContainer.innerHTML += `<h2>🛍️ Lojinha da Tsumiki</h2>
+      <p>Compre itens divertidos com seus pontos!</p>
+      <button class="btn" onclick="comprar('👗 Saia Rosa',50)">👗 Saia Rosa (50 pts)</button>
+      <button class="btn" onclick="comprar('💻 PC Gamer',200)">💻 PC Gamer (200 pts)</button>
+      <button class="btn" onclick="comprar('🌙 Viagem na Lua',500)">🌙 Viagem na Lua (500 pts)</button>
+      <p id="lojaMsg"></p>`;
+    criarBotaoVoltar();
+  }
+
+  // CORRIDA DE EMOJIS
+  if(game==='emojiRace'){
+    gameContainer.innerHTML += `<h2>🏁 Corrida de Emojis!</h2>
+      <p>Clique no emoji que você acha que vai ganhar!</p>
+      <div id="race" style="font-size:50px;">🐱 🐶 🐰 🐸</div>
+      <button class="btn" id="startRace">Começar Corrida</button>
+      <p id="raceMsg"></p>`;
+    document.getElementById("startRace").onclick=()=>{
+      const emojis=["🐱","🐶","🐰","🐸"];
+      const winner=emojis[Math.floor(Math.random()*emojis.length)];
+      addPoints(10);
+      document.getElementById("raceMsg").textContent="O vencedor é: "+winner+"! 🏆 +10 pts";
+    };
+    criarBotaoVoltar();
+  }
+
+  // FESTA DA DANÇA
+  if(game==='festa'){
+    gameContainer.innerHTML += `<h2>💃 Festa da Dança!</h2>
+      <p>Clique rápido para dançar e ganhar pontos!</p>
+      <div id="dance" style="font-size:80px;cursor:pointer;">🕺</div>
+      <p>Pontos ganhos: <span id="dancePoints">0</span></p>`;
+    let dancePts=0;
+    document.getElementById("dance").onclick=()=>{dancePts++; addPoints(1); document.getElementById("dancePoints").textContent=dancePts;};
+    criarBotaoVoltar();
+  }
+
+  // QUEM É A MAIS FOFA
+  if(game==='fofa'){
+    gameContainer.innerHTML += `<h2>💖 Quem é a mais fofa?</h2>
+      <p>Escolha entre Tsumiki Miniwa ou Senko-san:</p>
+      <button class="btn" id="tsumiki">Tsumiki Miniwa</button>
+      <button class="btn" id="senko">Senko-san</button>
+      <p id="fofaMsg"></p>`;
+    document.getElementById("tsumiki").onclick=()=>{addPoints(20); document.getElementById("fofaMsg").textContent="✅ Acertou! Tsumiki é a mais fofa! +20 pts 💖";};
+    document.getElementById("senko").onclick=()=>{document.getElementById("fofaMsg").textContent="❌ Ops! Na verdade, Tsumiki é a mais fofa! 🥲";};
+    criarBotaoVoltar();
+  }
+
+  // LUA FANTÁSTICA
+  if(game==='moon'){
+    gameContainer.innerHTML += `<h2>🌙 Mapa Fantástico da Lua</h2>
+      <div id="moonMap">
+        <p>✨ Clique nas estrelas para conhecer as meninas de anime!</p>
+        <div id="stars">
+          <img src="https://png.pngtree.com/png-clipart/20250102/original/pngtree-anime-girl-with-angel-wings-star-shine-on-transparent-background-png-image_18565896.png" class="animeGirl">
+          <img src="https://freepngimg.com/save/177300-girl-anime-render-png-file-hd/848x686" class="animeGirl">
+          <img src="https://img1.gratispng.com/ci2/ies/oqo/adodl7kn6.webp" class="animeGirl">
+        </div>
+        <p>Clique na mansão para visitar o Palácio da Deusa da Lua! 🌌</p>
+        <button class="btn" id="palacioBtn">🏰 Entrar no Palácio</button>
+      </div>
+      <div id="palacio" class="hidden">
+        <h2>🏰 Palácio da Deusa da Lua</h2>
+        <p>Bem-vindo, Caio! Você é o primeiro a visitar este lugar sagrado. 🌙💜</p>
+        <p>As estrelas aqui são meninas de anime que falam sobre a grandeza da Deusa da Lua...</p>
+      </div>`;
+
+    document.querySelectorAll('.animeGirl').forEach(img=>{
+      img.onclick=()=>{alert(`✨ Menina de anime: "A Deusa da Lua é magnífica! Você está honrado em visitá-la."`); addPoints(5);};
+    });
+    document.getElementById("palacioBtn").onclick=()=>{
+      document.getElementById("moonMap").classList.add("hidden");
+      document.getElementById("palacio").classList.remove("hidden");
+      addPoints(50);
+    };
+    criarBotaoVoltar();
+  }
+}
+
+function comprar(item,custo){
+  const lojaMsg=document.getElementById("lojaMsg");
+  if(pontos>=custo){pontos-=custo; pointsDisplay.textContent=pontos; lojaMsg.textContent="Você comprou "+item+"! 🎉";}
+  else{lojaMsg.textContent="Pontos insuficientes para comprar "+item+"!";}
+}
+</script>
+</body>
+</html>
